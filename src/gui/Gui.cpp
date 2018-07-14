@@ -51,13 +51,16 @@ std::istream& operator>> (std::istream& is, ClassIdInput& o){
 }
 
 
-Gui::Gui(bool live_capture, std::vector<ClassColour> class_colour_lookup, const int segmentation_width, const int segmentation_height) 
+Gui::Gui(bool live_capture, std::vector<ClassColour> class_colour_lookup,
+         const int segmentation_width, const int segmentation_height,
+         bool ui_disabled)
   : width_(1280)
   , height_(980)
   , segmentation_width_(segmentation_width)
   , segmentation_height_(segmentation_height)
   , panel_(205)
   , class_colour_lookup_(class_colour_lookup)
+  , ui_disabled(ui_disabled)
 {
   width_ += panel_;
   pangolin::Params window_params;
@@ -74,13 +77,11 @@ Gui::Gui(bool live_capture, std::vector<ClassColour> class_colour_lookup, const 
   pangolin::Display("cam").SetBounds(0, 1.0f, 0, 1.0f, -640 / 480.0)
     .SetHandler(new pangolin::Handler3D(s_cam_));
   // Small views along the bottom
-  pangolin::Display("raw").SetAspect(640.0f/480.0f);
   pangolin::Display("pred").SetAspect(640.0f/480.0f);
   pangolin::Display("segmentation").SetAspect(640.0f/480.0f);
   pangolin::Display("multi").SetBounds(pangolin::Attach::Pix(0),1/4.0f,pangolin::Attach::Pix(180),1.0).SetLayout(pangolin::LayoutEqualHorizontal)
     .AddDisplay(pangolin::Display("pred"))
-    .AddDisplay(pangolin::Display("segmentation"))
-    .AddDisplay(pangolin::Display("raw"));
+    .AddDisplay(pangolin::Display("segmentation"));
 
   // Vertical view along the side
   pangolin::Display("legend").SetAspect(640.0f/480.0f);
@@ -88,13 +89,16 @@ Gui::Gui(bool live_capture, std::vector<ClassColour> class_colour_lookup, const 
     .AddDisplay(pangolin::Display("legend"));
 
   // The control panel
-  pangolin::CreatePanel("ui").SetBounds(0.0, 1.0, 0.0, pangolin::Attach::Pix(panel_));
-  pause_.reset(new pangolin::Var<bool>("ui.Pause", false, true));
-  step_.reset(new pangolin::Var<bool>("ui.Step", false, false));
-  reset_.reset(new pangolin::Var<bool>("ui.Reset", false, false));
-  tracking_.reset(new pangolin::Var<bool>("ui.Tracking Only", false, false));
-  class_view_.reset(new pangolin::Var<bool>("ui.Class Colours", false, false));
-  class_choice_.reset(new pangolin::Var<ClassIdInput>("ui.Show class probs", ClassIdInput(0)));
+  pangolin::CreatePanel("sfusionui").SetBounds(0.0, 1.0, 0.0, pangolin::Attach::Pix(panel_));
+
+  if (!ui_disabled) {
+    pause_.reset(new pangolin::Var<bool>("sfusionui.Pause", false, true));
+    step_.reset(new pangolin::Var<bool>("sfusionui.Step", false, false));
+    reset_.reset(new pangolin::Var<bool>("sfusionui.Reset", false, false));
+    tracking_.reset(new pangolin::Var<bool>("sfusionui.Tracking Only", false, false));
+  }
+  class_view_.reset(new pangolin::Var<bool>("sfusionui.Class Colours", false, false));
+  class_choice_.reset(new pangolin::Var<ClassIdInput>("sfusionui.Show class probs", ClassIdInput(0)));
   probability_texture_array_.reset(new pangolin::GlTextureCudaArray(224,224,GL_LUMINANCE32F_ARB));
   rendered_segmentation_texture_array_.reset(new pangolin::GlTextureCudaArray(segmentation_width_,segmentation_height_,GL_RGBA32F));
 

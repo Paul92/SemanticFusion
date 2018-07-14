@@ -36,7 +36,8 @@ struct ClassIdInput;
 class Gui {
 public:
   //enum SelectProbabilityMap {Books,Chairs,Floor};
-  Gui(bool live_capture,std::vector<ClassColour> class_colour_lookup, const int segmentation_width, const int segmentation_height);
+  Gui(bool live_capture,std::vector<ClassColour> class_colour_lookup, const int segmentation_width, const int segmentation_height,
+      bool ui_disabled=false);
   virtual ~Gui();
 
   void preCall();
@@ -46,11 +47,25 @@ public:
   void displayRawNetworkPredictions(const std::string & id, float* device_ptr);
   void displayImg(const std::string & id, GPUTexture * img);
 
-  bool reset() const { return pangolin::Pushed(*reset_.get()); }
-  bool paused() const { return *pause_.get(); }
-  bool step() const { return pangolin::Pushed(*step_.get()); }
-  bool tracking() const { return *tracking_.get(); }
-  bool class_colours() const { return *class_view_.get(); }
+  bool reset() const {
+      return !ui_disabled && pangolin::Pushed(*reset_.get());
+  }
+
+  bool paused() const {
+      return !ui_disabled && *pause_.get();
+  }
+
+  bool step() const {
+      return !ui_disabled && pangolin::Pushed(*step_.get());
+  }
+
+  bool tracking() const {
+      return !ui_disabled && *tracking_.get();
+  }
+
+  bool class_colours() const {
+      return *class_view_.get();
+  }
 
 private:
   int width_;
@@ -61,6 +76,7 @@ private:
   std::vector<ClassColour> class_colour_lookup_;
   float* class_colour_lookup_gpu_;
   float* segmentation_rendering_gpu_;
+  const bool ui_disabled;
 
   std::unique_ptr<pangolin::Var<bool>> reset_;
   std::unique_ptr<pangolin::Var<bool>> pause_;
