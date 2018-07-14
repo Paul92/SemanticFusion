@@ -86,6 +86,10 @@ public:
     }
   }
 
+  const Eigen::Matrix4f & getCurrentPose() {
+      return elastic_fusion_->getCurrPose();
+  }
+
 private:
   bool initialised_;
   int height_;
