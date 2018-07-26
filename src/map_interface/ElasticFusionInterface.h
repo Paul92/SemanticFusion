@@ -90,6 +90,15 @@ public:
       return elastic_fusion_->getCurrPose();
   }
 
+  Eigen::Vector4f *downloadMap() const {
+      return elastic_fusion_->getGlobalModel().downloadMap();
+  }
+
+  unsigned int getLastCount() const {
+      return elastic_fusion_->getGlobalModel().lastCount();
+  }
+
+
 private:
   bool initialised_;
   int height_;

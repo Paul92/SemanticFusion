@@ -54,6 +54,7 @@ std::unique_ptr<T> make_unique(Args&&... args)
 slambench::outputs::Output *pose_output        = nullptr;
 slambench::outputs::Output *rgb_frame_output   = nullptr;
 slambench::outputs::Output *depth_frame_output = nullptr;
+slambench::outputs::Output *pointcloud_output  = nullptr;
 
 slambench::io::DepthSensor  *depth_sensor;
 slambench::io::CameraSensor *rgb_sensor;
@@ -137,6 +138,10 @@ bool sb_init_slam_system(SLAMBenchLibraryHelper * slam_settings) {
     pose_output = new slambench::outputs::Output("Pose", slambench::values::VT_POSE, true);
     slam_settings->GetOutputManager().RegisterOutput(pose_output);
     pose_output->SetActive(true);
+
+    pointcloud_output = new slambench::outputs::Output("PointCloud", slambench::values::VT_COLOUREDPOINTCLOUD, true);
+    pointcloud_output->SetKeepOnlyMostRecent(true);
+    slam_settings->GetOutputManager().RegisterOutput(pointcloud_output);
 
     rgb_frame_output = new slambench::outputs::Output("RGB Frame", slambench::values::VT_FRAME);
     rgb_frame_output->SetKeepOnlyMostRecent(true);
@@ -274,6 +279,38 @@ bool sb_update_outputs(SLAMBenchLibraryHelper *lib, const slambench::TimeStamp *
  
 
         depth_frame_output->AddPoint(*latest_output, frameValue);
+    }
+
+
+    if (pointcloud_output->IsActive()) {
+        slambench::values::ColoredPointCloudValue *point_cloud = new slambench::values::ColoredPointCloudValue();
+
+        Eigen::Vector4f * mapData = map->downloadMap();
+
+        for(unsigned int i = 0; i < map->getLastCount(); i++) {
+
+            Eigen::Vector4f pos = mapData[(i * 3) + 0];
+            Eigen::Vector4f col = mapData[(i * 3) + 1];
+
+            slambench::values::ColoredPoint3DF new_vertex(pos[0], pos[1], pos[2]);
+            new_vertex.R = int(col[0]) >> 16 & 0xFF;
+            new_vertex.G = int(col[0]) >>  8 & 0xFF;
+            new_vertex.B = int(col[0])       & 0xFF;
+
+            int r = new_vertex.R;
+            int g = new_vertex.G;
+            int b = new_vertex.B;
+
+            point_cloud->AddPoint(new_vertex);
+        }
+
+        // we're finished with the map data we got from efusion, so delete it
+        delete mapData;
+
+        // Take lock only after generating the map
+        std::lock_guard<FastLock> lock (lib->GetOutputManager().GetLock());
+
+        pointcloud_output->AddPoint(ts, point_cloud);
     }
 
     return true;
