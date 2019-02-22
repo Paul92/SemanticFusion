@@ -196,11 +196,11 @@ void SemanticFusionInterface::CRFUpdate(const std::unique_ptr<ElasticFusionInter
   delete [] my_surfels;
 }
 
-void SemanticFusionInterface::SaveArgMaxPredictions(std::string& filename,const std::unique_ptr<ElasticFusionInterface>& map) {
+cv::Mat SemanticFusionInterface::GetArgMaxPredictions(const std::unique_ptr<ElasticFusionInterface>& map) {
   const float* max_prob = class_max_gpu_->cpu_data() + max_components_;
   const float* max_class = class_max_gpu_->cpu_data();
   const std::vector<int>& surfel_ids = map->GetSurfelIdsCpu();
-  cv::Mat argmax_image(240,320,CV_8UC3);
+  cv::Mat argmax_image(240,320,CV_16UC1);
   for (int h = 0; h < 240; ++h) {
     for (int w = 0; w < 320; ++w) {
       float this_max_prob = 0.0;
@@ -218,10 +218,13 @@ void SemanticFusionInterface::SaveArgMaxPredictions(std::string& filename,const 
           }
         }
       }
-      argmax_image.at<cv::Vec3b>(h,w)[0] = static_cast<int>(this_max_class);
-      argmax_image.at<cv::Vec3b>(h,w)[1] =  static_cast<int>(this_max_class);
-      argmax_image.at<cv::Vec3b>(h,w)[2] =  static_cast<int>(this_max_class);
+      argmax_image.at<ushort>(h,w) = static_cast<ushort>(this_max_class);
     }
   }
-  cv::imwrite(filename,argmax_image);
+  return argmax_image;
+}
+
+void SemanticFusionInterface::SaveArgMaxPredictions(std::string& filename,const std::unique_ptr<ElasticFusionInterface>& map) {
+  cv::Mat argmax_image = GetArgMaxPredictions(map);
+  cv::imwrite(filename, argmax_image);
 }

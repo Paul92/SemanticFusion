@@ -60,6 +60,7 @@ public:
 
   void CRFUpdate(const std::unique_ptr<ElasticFusionInterface>& map, const int iterations);
 
+  cv::Mat GetArgMaxPredictions(const std::unique_ptr<ElasticFusionInterface>& map);
   void SaveArgMaxPredictions(std::string& filename,const std::unique_ptr<ElasticFusionInterface>& map);
   std::shared_ptr<caffe::Blob<float> > get_rendered_probability();
   std::shared_ptr<caffe::Blob<float> > get_class_max_gpu();
