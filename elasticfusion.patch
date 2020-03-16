@@ -1,0 +1,36 @@
+diff --git a/Core/src/CMakeLists.txt b/Core/src/CMakeLists.txt
+index a93951a..728545b 100644
+--- a/Core/src/CMakeLists.txt
++++ b/Core/src/CMakeLists.txt
+@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
+ find_package(Pangolin 0.1 REQUIRED)
+ find_package(CUDA REQUIRED)
+ find_package(SuiteSparse REQUIRED)
+-set(CUDA_HOST_COMPILER gcc-5)
++set(CUDA_HOST_COMPILER gcc-8)
+ 
+ set(efusion_SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Shaders" CACHE PATH "Where the shaders live")
+ message(${efusion_SHADER_DIR})
+@@ -81,7 +81,8 @@ target_link_libraries(efusion PUBLIC
+                       ${Pangolin_LIBRARIES}
+                       ${CUDA_LIBRARIES}
+                       ${SUITESPARSE_LIBRARIES}
+-					  ${EXTRA_WINDOWS_LIBS}
++                      ${CHOLMOD_LIBRARIES}
++                      ${EXTRA_WINDOWS_LIBS}
+ ) 
+ 
+ INSTALL(TARGETS efusion
+diff --git a/Core/src/GlobalModel.cpp b/Core/src/GlobalModel.cpp
+index 1ea9b41..df2b4e6 100644
+--- a/Core/src/GlobalModel.cpp
++++ b/Core/src/GlobalModel.cpp
+@@ -17,7 +17,7 @@
+  */
+ 
+ #include "GlobalModel.h"
+-#include <GL/glext.h>
++//#include <GL/glext.h>
+ 
+ const int GlobalModel::TEXTURE_DIMENSION = 3072;
+ const int GlobalModel::MAX_VERTICES = GlobalModel::TEXTURE_DIMENSION * GlobalModel::TEXTURE_DIMENSION;
