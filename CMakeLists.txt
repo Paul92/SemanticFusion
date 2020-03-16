@@ -3,7 +3,7 @@ if(POLICY CMP0007)
   cmake_policy(SET CMP0007 NEW)
 endif()
 
-set(CUDA_HOST_COMPILER gcc-7)
+set(CUDA_HOST_COMPILER gcc-8)
 
 set(CUDA_PROPAGATE_HOST_FLAGS "NO")
 set(CMAKE_BUILD_TYPE "Debug")
