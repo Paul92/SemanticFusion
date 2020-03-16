@@ -1,0 +1,12 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 094c0a49..5c1a5b21 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -39,7 +39,6 @@ caffe_option(ALLOW_LMDB_NOLOCK "Allow MDB_NOLOCK when reading LMDB files (only i
+ 
+ # ---[ Dependencies
+ include(cmake/Dependencies.cmake)
+-set(CUDA_HOST_COMPILER gcc-5)
+ 
+ # ---[ Flags
+ if(UNIX OR APPLE)
