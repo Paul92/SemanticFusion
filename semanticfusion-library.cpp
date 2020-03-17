@@ -112,8 +112,9 @@ const int crf_iterations  = 10;
 
 CaffeInterface caffeInterface;
 
-const std::string default_modelpath = "inference.prototxt";
-const std::string default_modelweights = "inference.caffemodel";
+const std::string caffe_modelroot = "benchmarks/semanticfusion/src/original/caffe_semanticfusion/models";
+const std::string default_modelpath = caffe_modelroot + "/nyu_rgbd/inference.prototxt";
+const std::string default_modelweights = caffe_modelroot + "/nyu_rgbd/inference.caffemodel";
 
 std::string modelpath = "";
 std::string modelweights = "";
