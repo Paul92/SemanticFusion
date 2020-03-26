@@ -3,10 +3,14 @@ if(POLICY CMP0007)
   cmake_policy(SET CMP0007 NEW)
 endif()
 
-set(CUDA_HOST_COMPILER gcc-8)
+if (NOT CUDA_HOST_COMPILER)
+    message(SEND_ERROR "CUDA_HOST_COMPILER not set")
+endif()
+if (NOT CUDA_ARCH_BIN)
+    message(SEND_ERROR "CUDA_ARCH_BIN not set")
+endif()
 
 set(CUDA_PROPAGATE_HOST_FLAGS "NO")
-set(CMAKE_BUILD_TYPE "Debug")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -24,7 +28,6 @@ file(GLOB_RECURSE cuda src/*.cu)
 
 list(REMOVE_ITEM srcs "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
 
-set(CUDA_ARCH_BIN "30 35 50 52 61" CACHE STRING "Specify 'real' GPU arch to build binaries for, BIN(PTX) format is supported. Example: 1.3 2.1(1.3) or 13 21(13)")
 include(CudaComputeTargetFlags.cmake)
 APPEND_TARGET_ARCH_FLAGS()
 
