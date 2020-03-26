@@ -1,5 +1,5 @@
 diff --git a/Core/src/CMakeLists.txt b/Core/src/CMakeLists.txt
-index a93951a..24d3e4f 100644
+index a93951a..4816308 100644
 --- a/Core/src/CMakeLists.txt
 +++ b/Core/src/CMakeLists.txt
 @@ -10,7 +10,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -10,7 +10,15 @@ index a93951a..24d3e4f 100644
  
  set(efusion_SHADER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/Shaders" CACHE PATH "Where the shaders live")
  message(${efusion_SHADER_DIR})
-@@ -81,7 +80,8 @@ target_link_libraries(efusion PUBLIC
+@@ -74,6 +73,7 @@ target_include_directories(efusion PUBLIC
+                            ${CUDA_INCLUDE_DIRS}
+                            ${EIGEN_INCLUDE_DIRS}
+                            ${SUITESPARSE_INCLUDE_DIRS}
++                           ${CHOLMOD_INCLUDE_DIR}
+ )
+ 
+ target_link_libraries(efusion PUBLIC
+@@ -81,7 +81,8 @@ target_link_libraries(efusion PUBLIC
                        ${Pangolin_LIBRARIES}
                        ${CUDA_LIBRARIES}
                        ${SUITESPARSE_LIBRARIES}
