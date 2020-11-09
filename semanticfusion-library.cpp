@@ -262,11 +262,11 @@ bool sb_init_slam_system(SLAMBenchLibraryHelper * slam_settings) {
     slam_settings->GetOutputManager().RegisterOutput(depth_frame_output);
     depth_frame_output->SetActive(true);
 
-//    semantic_projection_output = new slambench::outputs::Output("Semantic Projection", slambench::values::VT_LABELLEDFRAME);
-//    semantic_projection_output->SetKeepOnlyMostRecent(true);
-//    slam_settings->GetOutputManager().RegisterOutput(semantic_projection_output);
-//    semantic_pointcloud_output->SetActive(true);
-//
+    semantic_projection_output = new slambench::outputs::Output("Semantic Projection", slambench::values::VT_LABELLEDFRAME);
+    semantic_projection_output->SetKeepOnlyMostRecent(true);
+    slam_settings->GetOutputManager().RegisterOutput(semantic_projection_output);
+    semantic_pointcloud_output->SetActive(true);
+
     return true;
 }
 
@@ -517,22 +517,21 @@ bool sb_update_outputs(SLAMBenchLibraryHelper *lib, const slambench::TimeStamp *
 
     static int count = 0;
 
-//    if (semantic_projection_output->IsActive()) {
-//
-//        static const std::map<int, std::string> class_map = get_class_map(class_colour_lookup);
-//
-//        cv::Mat sf_predictions  = semantic_fusion->GetArgMaxPredictions(map);
-//
-////        const cv::Mat cnn_predictions = getCNNPredictions(segmented_prob);
-////
-////        fill_predictions(sf_predictions, cnn_predictions);
-//
-//        const auto frameValue = new slambench::values::LabelledFrameValue(sf_predictions.cols, sf_predictions.rows, class_map, sf_predictions.data);
-//
-//        std::lock_guard<FastLock> lock(lib->GetOutputManager().GetLock());
-//
-//        semantic_projection_output->AddPoint(*latest_output, frameValue);
-//    }
+    if (semantic_projection_output->IsActive()) {
+
+        static const std::map<int, std::string> class_map = get_class_map(class_colour_lookup);
+
+        cv::Mat sf_predictions  = semantic_fusion->GetArgMaxPredictions(map);
+
+//        const cv::Mat cnn_predictions = getCNNPredictions(segmented_prob);
+//        fill_predictions(sf_predictions, cnn_predictions);
+
+        const auto frameValue = new slambench::values::LabelledFrameValue(sf_predictions.cols, sf_predictions.rows, class_map, sf_predictions.data);
+
+        std::lock_guard<FastLock> lock(lib->GetOutputManager().GetLock());
+
+        semantic_projection_output->AddPoint(*latest_output, frameValue);
+    }
 
     return true;
 }
